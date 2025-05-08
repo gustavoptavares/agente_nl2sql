@@ -56,6 +56,9 @@ O sistema é baseado em uma arquitetura de agentes coordenados por um grafo de e
 
 ### 8. **Fluxo de Decisão dos Agentes**
 
+<div align="center">
+<img src="https://github.com/gustavoptavares/agente_nl2sql/blob/main/Fluxo%20de%20decisao.png" alt="Fluxo do Agente" width="500"/>
+</div>
 
 ### 🛠️ Tecnologias e Bibliotecas
 
@@ -83,9 +86,33 @@ Este sistema NL2SQL representa um passo importante na democratização do acesso
 
 ---
 
-## ▶️ Como Usar
+## ▶️ Como Executar
 
-1. Clone o repositório e instale as dependências:
+**Instalação dos pacotes necessários**
 
 ```bash
-pip install -r requirements.txt
+pip install streamlit langchain-openai pandas matplotlib pandasql sqlalchemy python-dotenv langgraph langchain-core seaborn plotly sqlite3  
+```
+
+**Execução do app Streamlit**
+```bash
+streamlit run nome_do_arquivo.py
+```
+
+**Tela do Deploy**
+
+<p align="center">
+  <img src="https://github.com/gustavoptavares/agente_nl2sql/blob/main/Deploy%201.jpg" alt="Imagem 1" width="500"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/gustavoptavares/agente_nl2sql/blob/main/Deploy%202.jpg" alt="Imagem 2" width="500"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/gustavoptavares/agente_nl2sql/blob/main/Deploy%203.jpg" alt="Imagem 3" width="500"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/gustavoptavares/agente_nl2sql/blob/main/Deploy%204.jpg" alt="Imagem 4" width="500"/>
+</p>
