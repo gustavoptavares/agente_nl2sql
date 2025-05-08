@@ -1,4 +1,4 @@
-# 🤖 Sistema Inteligente NL2SQL
+# 🤖 Agente Inteligente de Consulta a Dados
 
 Este projeto é um sistema interativo de análise de dados via linguagem natural, que transforma perguntas em linguagem humana em consultas SQL, executa essas consultas e apresenta os resultados de forma compreensível e visual.
 
@@ -6,7 +6,7 @@ Este projeto é um sistema interativo de análise de dados via linguagem natural
 
 ## 🔍 Visão Geral
 
-O sistema **NL2SQL** oferece uma interface intuitiva desenvolvida com **Streamlit**, onde usuários podem carregar arquivos de dados (CSV, Excel ou SQLite), fazer perguntas em linguagem natural e receber respostas precisas, visualizações automáticas e análises descritivas. Ele utiliza **LangGraph**, **LangChain** e modelos da **OpenAI** para orquestrar agentes inteligentes em um fluxo estruturado de compreensão, geração de SQL, execução e resposta.
+O sistema inteligente de consulta a dados oferece uma interface intuitiva desenvolvida com **Streamlit**, onde usuários podem carregar arquivos de dados (CSV, Excel ou SQLite), fazer perguntas em linguagem natural e receber respostas precisas, visualizações automáticas e análises descritivas. Ele utiliza **LangGraph**, **LangChain** e modelos da **OpenAI** para orquestrar agentes inteligentes em um fluxo estruturado de compreensão, geração de SQL, execução e resposta.
 
 ---
 
@@ -53,6 +53,9 @@ O sistema é baseado em uma arquitetura de agentes coordenados por um grafo de e
 
 ### 7. **Manipulador de Acompanhamento**
 - Recontextualiza perguntas subsequentes considerando o histórico de conversa.
+
+### 8. **Fluxo de Decisão dos Agentes**
+
 
 ### 🛠️ Tecnologias e Bibliotecas
 
