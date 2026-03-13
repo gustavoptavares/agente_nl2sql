@@ -1,28 +1,6 @@
-# 🤖 Agente NL2SQL com LangGraph + RAG Avançado
+# 🤖 Agente Text-to-SQL com LangGraph + RAG Avançado
 
-[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-green.svg)](https://fastapi.tiangolo.com/)
-[![LangGraph](https://img.shields.io/badge/LangGraph-0.2+-orange.svg)](https://langchain-ai.github.io/langgraph/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.30+-red.svg)](https://streamlit.io/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-Sistema de agentes de IA para conversão de linguagem natural em SQL (NL2SQL), utilizando arquitetura RAG avançada com múltiplos agentes orquestrados via LangGraph.
-
----
-
-## 📋 Índice
-
-- [Sobre o Projeto](#-sobre-o-projeto)
-- [Funcionalidades](#-funcionalidades)
-- [Arquitetura](#-arquitetura)
-- [Tecnologias](#-tecnologias)
-- [Instalação](#-instalação)
-- [Uso](#-uso)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Agentes](#-agentes)
-- [Pipeline RAG](#-pipeline-rag)
-- [Observabilidade](#-observabilidade)
-- [Contribuição](#-contribuição)
+Sistema de agentes de IA para conversão de linguagem natural em SQL (Text-to-SQL), utilizando arquitetura RAG avançada com múltiplos agentes orquestrados via LangGraph.
 
 ---
 
@@ -56,9 +34,114 @@ Este projeto é uma **Prova de Conceito (POC)** que demonstra a capacidade de ag
 
 ---
 
+## 🤖 Agentes
+
+O sistema é composto por **9 agentes especializados**, cada um com uma função específica dentro do workflow.
+
+| Agente | Função |
+|--------|---------|
+| **Router Agent** | Classifica a intenção da pergunta (DB_QUERY, GENERAL_QUESTION, FOLLOW_UP, VISUALIZATION) |
+| **Schema Agent** | Extrai e indexa esquemas de bancos de dados |
+| **RAG Agent** | Executa o pipeline de recuperação semântica |
+| **NL2SQL Agent** | Gera consultas SQL a partir da pergunta |
+| **SQL Validator** | Valida sintaxe, segurança e boas práticas SQL |
+| **SQL Executor** | Executa queries em diferentes fontes de dados |
+| **Explanation Agent** | Transforma resultados em linguagem natural |
+| **Visualization Agent** | Gera gráficos automaticamente |
+| **Memory Agent** | Mantém contexto para conversas contínuas |
+
+---
+
+## Pipeline de Recuperação Híbrida
+
+```text
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   BM25      │     │   Dense     │     │   Metadata  │
+│  (Lexical)  │     │ (Semântico) │     │   Filter    │
+└──────┬──────┘     └──────┬──────┘     └──────┬──────┘
+       │                   │                   │
+       └───────────────────┼───────────────────┘
+                           ▼
+                    ┌─────────────┐
+                    │    RRF      │
+                    │   Fusion    │
+                    └──────┬──────┘
+                           ▼
+                    ┌─────────────┐
+                    │   Flash     │
+                    │  Reranker   │
+                    └──────┬──────┘
+                           ▼
+                    ┌─────────────┐
+                    │   Context   │
+                    │   Final     │
+                    └─────────────┘
+```
+---
+
 ## 🏗️ Arquitetura
 
-┌─────────────────────────────────────────────────────────────┐ │ STREAMLIT (UI) │ │ Porta: 8501 │ └──────────────────────┬──────────────────────────────────────┘ │ ▼ ┌─────────────────────────────────────────────────────────────┐ │ FASTAPI (Backend) │ │ Porta: 8000 │ └──────────────────────┬──────────────────────────────────────┘ │ ▼ ┌─────────────────────────────────────────────────────────────┐ │ LANGGRAPH (Agentes) │ │ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ │ │ │ Router │ │ Schema │ │ RAG │ │ NL2SQL │ │ │ │ Agent │ │ Agent │ │ Agent │ │ Agent │ │ │ └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ │ │ └───────────┴───────────┴───────────┘ │ │ │ │ │ ▼ │ │ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ │ │ │ SQL │ │ SQL │ │ Exp │ │ Viz │ │ │ │Validator│ │Executor │ │ Agent │ │ Agent │ │ │ └─────────┘ └─────────┘ └─────────┘ └─────────┘ │ └──────────────────────┬──────────────────────────────────────┘ │ ┌──────────────┼──────────────┐ ▼ ▼ ▼ ┌─────────┐ ┌─────────┐ ┌─────────────┐ │ Qdrant │ │ Banco │ │ LangSmith │ │ (RAG) │ │ Dados │ │(Observabil.)│ │ Porta: │ │ │ │ │ │ 6333 │ │ │ │ │ └─────────┘ └─────────┘ └─────────────┘
+```mermaid
+flowchart TB
+    U[Usuário] --> S[Streamlit UI<br/>src/frontend]
+    S --> API[FastAPI API<br/>src/api]
+
+    API --> G[LangGraph Orchestrator<br/>graph.py]
+    G --> R1[Router Agent]
+
+    R1 -->|DB_QUERY| SA[Schema Agent]
+    R1 -->|FOLLOW_UP| MA[Memory Agent]
+    R1 -->|VISUALIZATION_REQUEST| VA[Visualization Agent]
+    R1 -->|GENERAL_QUESTION| EA[Explanation Agent]
+
+    SA --> DS{Fontes de Dados}
+    DS --> PG[(PostgreSQL/MySQL/SQLite)]
+    DS --> CSV[(CSV)]
+    DS --> XLS[(Excel/XLSX)]
+
+    SA --> RA[RAG Agent]
+    RA --> BM25[BM25 Retriever]
+    RA --> DR[Dense Retriever]
+    BM25 --> RRF[RRF Fusion]
+    DR --> RRF
+    RRF --> MF[Metadata Filter]
+    MF --> FR[Flash Reranker]
+    FR --> N2S[NL2SQL Agent]
+
+    MA --> N2S
+    SA --> N2S
+    N2S --> SV[SQL Validator Agent]
+    SV -->|valido| SE[SQL Executor Agent]
+    SV -->|invalido/retry| N2S
+
+    SE --> PG
+    SE --> CSV
+    SE --> XLS
+
+    SE --> EA
+    SE --> VA
+    EA --> API
+    VA --> API
+    API --> S
+
+    SA --> Q[(Qdrant Vector DB)]
+    RA --> Q
+
+    G --> LS[LangSmith]
+    R1 --> LS
+    SA --> LS
+    RA --> LS
+    N2S --> LS
+    SV --> LS
+    SE --> LS
+
+    subgraph Infra[Infra Local]
+        direction TB
+        Q
+        API
+        S
+    end
+```
 
 ---
 
@@ -96,10 +179,3 @@ Este projeto é uma **Prova de Conceito (POC)** que demonstra a capacidade de ag
 - Docker e Docker Compose
 - Chave de API OpenAI
 - Chave de API LangSmith (opcional, para observabilidade)
-
-Exemplos de Perguntas
-
-"Qual o total de vendas por mês em 2024?"
-"Mostre os top 10 clientes com maior faturamento"
-"E se eu filtrar apenas por São Paulo?"
-"Gere um gráfico de linha das vendas ao longo do tempo"
