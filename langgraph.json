@@ -1,0 +1,13 @@
+{
+  "title": "NL2SQL POC",
+  "description": "Sistema de conversão de linguagem natural para SQL",
+  "graphs": {
+    "nl2sql": {
+      "path": "./src/graph.py:graph",
+      "description": "Grafo principal NL2SQL"
+    }
+  },
+  "env": ".env",
+  "python_version": "3.11",
+  "dependencies": ["./requirements.txt"]
+}
